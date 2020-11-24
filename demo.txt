@@ -1,5 +1,17 @@
-aaaaa
-bbbb
-ccc
-dd
-e
+
+工作区----add---->暂存区----commit---->本地库
+
+git init：初始化本地仓库
+git add 文件名：将本地文件提交到暂存区
+git commit -m "相关信息" 文件名：将暂存区的文件提交到本地仓库
+git status：查看本地仓库状态
+日志展示方式：
+方式1：git log：查看仓库历史（空格向下翻页；b向上翻页；q退出） ===> 分页
+方式2：git log --pretty=oneline：每一行展示一条仓库历史
+方式3：git log --oneline：同上，但缩写了索引号
+方式4：git reflog：索引+指针(HEAD@{数字})+内容  数字：指针回到当前这个历史版本需要走多少步
+
+git reset --hard 索引号：前进或后退历史版本；工作区+暂存区+本地库，同步修改    P.S.选中即复制，右键paste粘贴
+git reset --mixed 索引号：前进或后退历史版本；暂存区+本地库，同步修改
+git reset --soft 索引号：前进或后退历史版本；只更新本地库
+
