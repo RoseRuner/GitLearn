@@ -1,0 +1,120 @@
+
+工作区（磁盘）----add---->暂存区----commit---->本地库
+
+git init：初始化本地仓库
+git add [文件名]：将本地文件提交到暂存区
+git commit -m "相关信息" 文件名：将暂存区的文件提交到本地仓库
+git status：查看本地仓库状态
+
+===== 日志 =====
+日志展示方式：
+方式1：git log：查看仓库历史（空格向下翻页；b向上翻页；q退出） ===> 分页
+方式2：git log --pretty=oneline：每一行展示一条仓库历史
+方式3：git log --oneline：同上，但缩写了索引号
+方式4：git reflog：索引+指针(HEAD@{数字})+内容  数字：指针回到当前这个历史版本需要走多少步
+
+===== 前进或后退历史版本 =====
+git reset --hard [索引号]：前进或后退历史版本；工作区+暂存区+本地库，同步修改    P.S.选中即复制，右键paste粘贴
+git reset --mixed [索引号]：前进或后退历史版本；暂存区+本地库，同步修改
+git reset --soft [索引号]：前进或后退历史版本；只更新本地库
+
+===== 删除文件，从本地库找回删除文件 =====
+rm 文件名：删除工作区的该文件
+再通过add、commit命令，即可同步更新暂存区、本地库，删除该文件
+本地库中并未实际删除，实际上时将历史版本 回滚 到添加文件前的版本
+通过git reset --hard 索引号，可以回滚到 添加文件的版本，从而找回被删除文件
+git reset -- Hard：回滚到最新版本（缓存区删了，本地库没删时使用）
+
+===== diff命令 =====
+Git以行为单位管理数据
+git diff [文件名]：将工作区的文件和暂存区中的文件进行比较
+git diff：多个文件比对
+git diff [索引] ([文件名])：通过索引，将工作区的文件和本地库中的文件进行比较
+
+===== 分支 =====
+master：主分支
+[branch01]：子分支，新独立功能开辟新的分支
+分支合并
+分支合并后，有bug，重新开个分支[hot_fix]，当bug修复完，再合并
+多个分支并行开发，互相不影响，提高开发效率
+
+    == 分支操作 ==
+    git branch -v：查看分支  分支名前面的星号，代表你在哪个分支
+    git branch [新分支名]：创建新分支
+    git checkout [分支名]：切换分支
+
+    == 冲突(conflict) ==
+    问题出现：
+        (分支名|MERGING)
+        <<<<<<< HEAD
+        当前分支修改的内容
+        =======
+        合并过来分支修改的内容
+        >>>>>>> 合并过来的分支名
+    解决：
+        人为决定，并修改文件内容
+        将工作区的内容添加到暂存区 ----add
+        将暂存区中的文件commit到本地库 ----git commit -m "解决了冲突"  P.S.不能带文件名
+    
+===== 远程库操作 =====
+在Git本地将地址保存，通过别名：
+    git remote -v：查看别名
+    git remote add 别名 远程库地址(HTTPS)
+
+    == 推送 ==
+    git push 别名 分支名(master)：将本地的某分支的内容，提交到远程库中，并会在远程库创建新的分支
+     * [new branch]      master -> master
+    git push -u 别名 分支名(master) -f：推送同时指定该别名为默认主机，后面就可以不加任何参数使用git push了，-f强制推送
+
+    == 拉取 ==
+    fetch：拉取操作  +  merge：合并操作
+    git fetch [别名] [分支名(master)]：抓取操作。只将远程库中的内容下载到本地，但是工作区中的文件没有更新
+    git checkout [别名]/[分支名(master)]：切换到远程的分支，查看里面内容
+    git merge [别名]/[分支名(master)]：合并操作。
+    git pull [别名] [分支名(master)]：直接拉取
+    git pull [别名] [分支名(master)] --allow-unrelated-histories：允许不相关历史合并
+
+    == 克隆 ==
+    git clone 远程库地址(HTTPS)：克隆操作
+    帮我我们完成3件事：
+        1. 初始化本地库
+        2. 将远程库内容完整地克隆到本地库
+        3. 替我们创建远程库的别名
+
+    == 邀请成员 ==
+    Git-项目-网页中， Setting -- Manage access -- Invite a collaborator
+    添加成功后，复制成员列表中的邀请链接，进行邀请
+
+===== 跨团队合作 =====
+其他公司：
+    进入项目地址，点击页面中的Fork，克隆，更新数据，add、commit。
+    点击项目页面中的 Pull requests -- New pull request -- Create pull request -- 题目，更新内容说明 -- Create pull request
+
+主公司：
+    点击项目页面中的 Pull requests -- 点击请求 -- (互相留言) -- Files changed查看更改提交的内容 -- 确定后，Merge pull request，合并 -- confirm merge
+
+===== SSH免密操作 =====
+1. 用户主目录(cd ~)
+    C盘 -- 用户 -- 用户名
+2. 生成.ssh目录(ssh-keygen -t rsa -C [邮箱])
+    keygen: key generation
+    C大写
+3. 回车3次（确认默认值）
+4. 查看用户主目录是否有.ssh目录 
+5. 复制 id_rsa.pub 里的内容
+6. 打开Git -- 点击头像下拉选项Setting -- SSH and GPG keys -- New SSH key -- Title中随意起名，Key中粘贴id_rsa.pub 里的内容 -- Add SSH key
+7. git remote add [别名] [远程库git地址]：对ssh远程地址起别名
+8. git remote -v：检查别名是否添加成功
+
+===== IDEA =====
+1. Setting -- Version Control -- Git -- Path to Git executable选择Git目录下\bin\git.exe
+2. 初始项目：VCS -- import into Version Control -- Create Git Repository
+    相当于git init，检查项目目录下是否有.git目录
+3. 右键项目 -- Git -- Add/Commit
+    相当于git add和git commit操作
+4. 推送：右键项目/文件 -- Git -- Repository -- Push -- Define remote -- Name：别名、URL：项目地址
+5. 拉取：右键项目/文件 -- Git -- Repository -- Pull -- 选择别名 -- 填写分支名
+    一般先拉取，再推送
+6. 克隆：File -- New -- Project from Version Control... -- Git -- URL：项目地址、Directory：存放位置 -- Test：测试是否能连接到Git中的项目
+    克隆后的主目录下会有.idea目录：既变成了一个本地仓库，又变成了工作空间
+7. 冲突：push后 -- 有冲突提示 -- 点击merge合并 -- Accept Yours选择你的、Accept Theirs选择远程项目中的、Merge合并 -- 点击行数旁边的按钮可以进行操作，也可以直接编辑中间界面的最终结果
